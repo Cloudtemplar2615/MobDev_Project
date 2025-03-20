@@ -2,7 +2,7 @@
 //  AddItemView.swift
 //  Project-Calculator
 //
-//  Created by harry on 03/12/1403 AP.
+// 
 //
 
 import SwiftUI
