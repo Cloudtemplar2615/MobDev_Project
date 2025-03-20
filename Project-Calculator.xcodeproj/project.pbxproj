@@ -14,7 +14,6 @@
 		4ADC9C332D689C9600463344 /* LaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADC9C322D689C9600463344 /* LaunchScreenView.swift */; };
 		4ADC9C352D689DA900463344 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADC9C342D689DA900463344 /* AboutView.swift */; };
 		4ADC9C372D689E5300463344 /* AddItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADC9C362D689E5300463344 /* AddItemView.swift */; };
-		BA270D3C2D8BD18C006009C3 /* EdititemIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA270D3B2D8BD18C006009C3 /* EdititemIView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,7 +25,6 @@
 		4ADC9C322D689C9600463344 /* LaunchScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenView.swift; sourceTree = "<group>"; };
 		4ADC9C342D689DA900463344 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		4ADC9C362D689E5300463344 /* AddItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemView.swift; sourceTree = "<group>"; };
-		BA270D3B2D8BD18C006009C3 /* EdititemIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdititemIView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +64,6 @@
 				4ADC9C282D689AA000463344 /* Preview Content */,
 				4ADC9C342D689DA900463344 /* AboutView.swift */,
 				4ADC9C362D689E5300463344 /* AddItemView.swift */,
-				BA270D3B2D8BD18C006009C3 /* EdititemIView.swift */,
 			);
 			path = "Project-Calculator";
 			sourceTree = "<group>";
@@ -154,7 +151,6 @@
 				4ADC9C232D689A9F00463344 /* Project_CalculatorApp.swift in Sources */,
 				4ADC9C332D689C9600463344 /* LaunchScreenView.swift in Sources */,
 				4ADC9C372D689E5300463344 /* AddItemView.swift in Sources */,
-				BA270D3C2D8BD18C006009C3 /* EdititemIView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
