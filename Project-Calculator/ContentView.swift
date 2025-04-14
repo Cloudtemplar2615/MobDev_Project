@@ -105,7 +105,7 @@ struct ContentView: View {
                     Text("Total: $\(totalCost, specifier: "%.2f")")
                         .font(.headline)
                         .onTapGesture {
-                            showBreakdownSheet = true // ✅ Show breakdown sheet
+                            showBreakdownSheet = true
                         }
 
                     

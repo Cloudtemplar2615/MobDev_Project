@@ -38,7 +38,7 @@ struct EditItemView: View {
                     TextField("Name", text: $name)
                     TextField("Price", text: $price)
                         .keyboardType(.decimalPad)
-
+                    
                     Picker("Category", selection: $category) {
                         ForEach(categories, id: \.self) {
                             Text($0)
@@ -53,7 +53,7 @@ struct EditItemView: View {
                         validateAndSave()
                     }
                 }
-
+                
                 ToolbarItem(placement: .bottomBar) {
                     Button(role: .destructive) {
                         showDeleteConfirmation = true
@@ -71,13 +71,20 @@ struct EditItemView: View {
                         Button("Cancel", role: .cancel) {}
                     }
                 }
-
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        hideKeyboard()
+                    }
+                }
+                
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
+               
             .alert("Invalid Input", isPresented: $showAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
@@ -111,3 +118,7 @@ struct EditItemView: View {
         presentationMode.wrappedValue.dismiss()
     }
 }
+    func hideKeyboard() {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+
