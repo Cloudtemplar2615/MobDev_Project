@@ -14,6 +14,10 @@
 		4ADC9C332D689C9600463344 /* LaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADC9C322D689C9600463344 /* LaunchScreenView.swift */; };
 		4ADC9C352D689DA900463344 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADC9C342D689DA900463344 /* AboutView.swift */; };
 		4ADC9C372D689E5300463344 /* AddItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADC9C362D689E5300463344 /* AddItemView.swift */; };
+		67EE23EB2DACAB310099D8FB /* EdititemIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67EE23EA2DACAB310099D8FB /* EdititemIView.swift */; };
+		67EE23ED2DACAB3B0099D8FB /* DeleteItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67EE23EC2DACAB3B0099D8FB /* DeleteItemView.swift */; };
+		67EE23EF2DACAB420099D8FB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67EE23EE2DACAB420099D8FB /* SettingsView.swift */; };
+		67EE23F12DACAB470099D8FB /* SearchProductView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67EE23F02DACAB470099D8FB /* SearchProductView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +29,10 @@
 		4ADC9C322D689C9600463344 /* LaunchScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenView.swift; sourceTree = "<group>"; };
 		4ADC9C342D689DA900463344 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		4ADC9C362D689E5300463344 /* AddItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemView.swift; sourceTree = "<group>"; };
+		67EE23EA2DACAB310099D8FB /* EdititemIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EdititemIView.swift; path = "Project-Calculator/EdititemIView.swift"; sourceTree = SOURCE_ROOT; };
+		67EE23EC2DACAB3B0099D8FB /* DeleteItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteItemView.swift; sourceTree = "<group>"; };
+		67EE23EE2DACAB420099D8FB /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		67EE23F02DACAB470099D8FB /* SearchProductView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchProductView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +72,10 @@
 				4ADC9C282D689AA000463344 /* Preview Content */,
 				4ADC9C342D689DA900463344 /* AboutView.swift */,
 				4ADC9C362D689E5300463344 /* AddItemView.swift */,
+				67EE23EA2DACAB310099D8FB /* EdititemIView.swift */,
+				67EE23EC2DACAB3B0099D8FB /* DeleteItemView.swift */,
+				67EE23EE2DACAB420099D8FB /* SettingsView.swift */,
+				67EE23F02DACAB470099D8FB /* SearchProductView.swift */,
 			);
 			path = "Project-Calculator";
 			sourceTree = "<group>";
@@ -147,10 +159,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				4ADC9C352D689DA900463344 /* AboutView.swift in Sources */,
+				67EE23EF2DACAB420099D8FB /* SettingsView.swift in Sources */,
+				67EE23ED2DACAB3B0099D8FB /* DeleteItemView.swift in Sources */,
 				4ADC9C252D689A9F00463344 /* ContentView.swift in Sources */,
 				4ADC9C232D689A9F00463344 /* Project_CalculatorApp.swift in Sources */,
 				4ADC9C332D689C9600463344 /* LaunchScreenView.swift in Sources */,
 				4ADC9C372D689E5300463344 /* AddItemView.swift in Sources */,
+				67EE23F12DACAB470099D8FB /* SearchProductView.swift in Sources */,
+				67EE23EB2DACAB310099D8FB /* EdititemIView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

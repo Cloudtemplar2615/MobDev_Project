@@ -1,14 +1,9 @@
-//
-//  SettingsView.swift
-//  Project-Calculator
-//
-//
-
 import SwiftUI
 
 struct SettingsView: View {
     @AppStorage("currencyType") private var currencyType: String = "CAD"
-    
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
         List {
             Section(header: Text("General")) {
@@ -21,5 +16,12 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
+        .toolbar {           
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Done") {
+                    dismiss()
+                }
+            }
+        }
     }
 }

@@ -18,7 +18,7 @@ struct DeleteItemView: View {
                     Text("Are you sure you want to delete the product?")
                     Text("Name: \(product.name)")
                     Text("Price: \(product.price, format: .currency(code: "CAD"))")
-                    Text("Category: \(product.category.rawValue)")
+                    Text("Category: \(product.category)")
                         .foregroundColor(.gray)
                 }
             }
@@ -52,9 +52,9 @@ struct DeleteItemView: View {
 struct DeleteItemView_Previews: PreviewProvider {
     static var previews: some View {
         DeleteItemView(
-            product: .constant(Product(name: "Example", price: 5.99, category: .food)),
+            product: .constant(Product(name: "Example", price: 5.99, category: "food")),
             isEditing: .constant(true),
-            products: .constant([Product(name: "Example", price: 5.99, category: .food)])
+            products: .constant([Product(name: "Example", price: 5.99, category: "food")])
         )
     }
 }

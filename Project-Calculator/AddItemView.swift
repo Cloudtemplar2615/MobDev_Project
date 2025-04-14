@@ -2,67 +2,54 @@
 //  AddItemView.swift
 //  Project-Calculator
 //
-//  Created by harry on 03/12/1403 AP.
-//
 
 import SwiftUI
 
 struct AddItemView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.presentationMode) var presentationMode: Binding <PresentationMode>
     @Binding var products: [Product]
     @Binding var categories: [String]
-    let saveAction: () -> Void
-    
+    var saveAction: () -> Void
+
     @State private var name = ""
     @State private var price = ""
-    @State private var selectedCategory = "Food"
-    @State private var newCategory = ""
+    @State private var category = "Food"
 
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Item Details")) {
+                Section(header: Text("Product Details")) {
                     TextField("Name", text: $name)
                     TextField("Price", text: $price)
                         .keyboardType(.decimalPad)
-                    
-                    Picker("category", selection: $selectedCategory){
-                        ForEach(categories, id: \.self){category in Text(category)
-                        }
-                    }
-                    TextField("New Category", text:$newCategory)
-                    Button("Add Category"){
-                        if !newCategory.isEmpty && !categories.contains(newCategory){
-                            categories.append(newCategory)
-                            selectedCategory = newCategory
-                            newCategory = ""
-                        }
-                    }
-                        }
-                    }
-            .navigationTitle("Add Item")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
-                        if let priceValue = Double(price), !name.isEmpty {
-                            let newItem = Product(name: name, price: priceValue, category: selectedCategory)
-                            products.append(newItem)
-                            saveAction()
-                            dismiss()
+
+                    Picker("Category", selection: $category) {
+                        ForEach(categories, id: \.self) {
+                            Text($0)
                         }
                     }
                 }
             }
+            .navigationTitle("Add Item")
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        if let priceValue = Double(price) {
+                            let newProduct = Product(name: name, price: priceValue, category: category)
+                            products.append(newProduct)
+                            saveAction()
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                    }
+                }
+
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                }
+            }
+            .background(Color(.systemBackground)) // Supports Dark Mode
         }
     }
 }
-
-#Preview {
-    AddItemView(products: .constant([]), categories: .constant(["Food","Medication","Cleaning","Other"]), saveAction:{})
-}
-

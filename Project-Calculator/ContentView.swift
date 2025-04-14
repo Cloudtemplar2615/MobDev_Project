@@ -2,127 +2,160 @@
 //  ContentView.swift
 //  Project-Calculator
 //
-//
+
 import SwiftUI
-import Foundation
 
 struct Product: Identifiable, Codable {
     var id = UUID()
-    let name: String
-    let price: Double
-    let category: String
-    
-    init(id:UUID = UUID(), name: String, price: Double, category: String){
-        self.id = id
-        self.name = name
-        self.price = price
-        self.category = category
-    }
+    var name: String
+    var price: Double
+    var category: String
 }
 
 struct ContentView: View {
     @State private var products: [Product] = []
     @State private var categories: [String] = ["Food", "Medication", "Cleaning", "Other"]
     @State private var showAddItemSheet = false
-    
-    //define different tax rates per category
+    @State private var showEditItemSheet = false
+    @State private var selectedProduct: Product?
+    @State private var showDeleteConfirmation = false
+    @State private var indexToDelete: IndexSet?
+    @State private var showDeleteItemSheet = false
+    @State private var productToDelete: Product?
+    @State private var showSettings = false
+    @State private var searchText = ""
+    @State private var showAbout = false
+
     let taxRates: [String: Double] = [
         "Food": 0.05,
         "Medication": 0.00,
         "Cleaning": 0.13,
         "Other": 0.13
     ]
-    
-    //compute total cost including category specific tax
-    var totalCost: Double {
-        let subtotal = products.reduce(0) { (total, product) in
-            let taxRate = taxRates[product.category] ?? 0.13  // Default 13%
-            return total + product.price + (product.price * taxRate)
+    var filteredProducts: [Product] {
+        if searchText.isEmpty {
+            return products
+        } else {
+            return products.filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
-        return subtotal
     }
     
+    var totalCost: Double {
+        products.reduce(0) { total, product in
+            let taxRate = taxRates[product.category] ?? 0.13
+            return total + product.price + (product.price * taxRate)
+        }
+    }
+
     var body: some View {
-        TabView {
-            NavigationView {
-                VStack {
-                    List {
-                        ForEach(products) { product in
-                            HStack {
-                                Text(product.name)
-                                Spacer()
-                                Text("$\(product.price, specifier: "%.2f")")
-                                    .foregroundColor(.gray)
-                            }
+        NavigationView {
+            VStack {
+                List {
+                    ForEach(filteredProducts) { product in
+                        HStack {
+                            Text(product.name)
+                            Spacer()
+                            Text("$\(product.price, specifier: "%.2f")")
+                                .foregroundColor(.gray)
                         }
-                        .onDelete(perform: deleteProduct)
+                                Button(role: .destructive) {
+                                    productToDelete = product
+                                    showDeleteItemSheet = true
+                                } label: {
+                                    Image(systemName: "pencil")
+                                }
+                        .onTapGesture {
+                            selectedProduct = product
+                            showEditItemSheet = true
+                        }
                     }
-                    .listStyle(.insetGrouped)
-                    
-                    VStack {
-                        Text("Total: $\(totalCost, specifier: "%.2f")")
-                            .font(.headline)
-                            .padding()
+                    .onDelete { indexSet in
+                        indexToDelete = indexSet
+                        showDeleteConfirmation = true
                     }
                 }
-                .navigationTitle("Shopping List")
-                .toolbar {
+                .listStyle(.insetGrouped)
+                .searchable(text: $searchText, prompt: "Search products")
+                VStack {
+                    Text("Total: $\(totalCost, specifier: "%.2f")")
+                        .font(.headline)
+                        .padding()
+                }
+            }
+            .navigationTitle("Shopping List")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        showSettings = true
+                    }) {
+                        Image(systemName: "gear")
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showAddItemSheet = true }) {
                         Label("Add Item", systemImage: "plus")
                     }
                 }
-                .sheet(isPresented: $showAddItemSheet) {
-                    AddItemView(products: $products, categories: $categories, saveAction: saveProducts)
+                ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: { showAbout = true }) {
+                            Label("About", systemImage: "info.circle")
+                        }
+                    }
+            }
+            
+            .sheet(isPresented: $showAddItemSheet) {
+                AddItemView(products: $products, categories: $categories, saveAction: saveProducts)
+            }
+            .sheet(isPresented: $showAbout) {
+                NavigationView {
+                    AboutView()
                 }
             }
-            .tabItem { Label("List", systemImage: "cart") }
-            
-            AboutView()
-                .tabItem { Label("About", systemImage: "info.circle") }
+            .sheet(isPresented: $showDeleteItemSheet) {
+                if let productToDelete = productToDelete {
+                    DeleteItemView(
+                        product: Binding(
+                            get: { productToDelete },
+                            set: { self.productToDelete = $0 }
+                        ),
+                        isEditing: $showDeleteItemSheet,
+                        products: $products
+                    )
+                }
+            }
+            .sheet(item: $selectedProduct) { product in
+                EditItemView(product: product, products: $products, saveAction: saveProducts)
+            }
+            .sheet(isPresented: $showSettings) {
+                NavigationView {
+                    SettingsView()
+                }
+            }
+            .alert("Are you sure?", isPresented: $showDeleteConfirmation) {
+                Button("Cancel", role: .cancel) {}
+                Button("Delete", role: .destructive) {
+                    if let indexSet = indexToDelete {
+                        products.remove(atOffsets: indexSet)
+                        saveProducts()
+                    }
+                }
+            }
         }
         .onAppear {
-            loadProducts() //load saved items when the app starts
+            loadProducts()
         }
     }
-    
-    //delete item from list
-    func deleteProduct(at offsets: IndexSet) {
-        products.remove(atOffsets: offsets)
-        saveProducts() // Save changes
-    }
-    
-    //save products to UserDefaults
+
     func saveProducts() {
         if let encoded = try? JSONEncoder().encode(products) {
             UserDefaults.standard.set(encoded, forKey: "savedProducts")
-            print("Products saved: \(products)")
-        }else{
-            print("failed to encode products")
         }
     }
-    
-    //load products from UserDefaults
+
     func loadProducts() {
-        if let savedData = UserDefaults.standard.data(forKey: "savedProducts"){
-            if let decoded = try? JSONDecoder().decode([Product].self, from: savedData){
-                products = decoded
-                print("Products loaded: \(products)")
-            } else {
-                    print("Failed to decode products")
-            }
-        }else {
-            print("No saved data found")
+        if let savedData = UserDefaults.standard.data(forKey: "savedProducts"),
+           let decoded = try? JSONDecoder().decode([Product].self, from: savedData) {
+            products = decoded
         }
     }
-    
-    //
-    struct ContentView_Previews: PreviewProvider {
-        static var previews: some View {
-            ContentView()
-        }
-    }
-    
-    
-    
-    
 }

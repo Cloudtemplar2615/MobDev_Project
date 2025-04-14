@@ -20,7 +20,7 @@ struct LaunchScreenView: View {
                     .foregroundColor(.blue)
                     .padding()
 
-                Text("By Group ")
+                Text("By Group 3")
                     .font(.title3)
                     .foregroundColor(.gray)
 

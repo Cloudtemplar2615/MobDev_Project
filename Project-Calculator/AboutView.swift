@@ -1,11 +1,8 @@
-//
-//  AboutView.swift
-//  Project-Calculator
-//
-
 import SwiftUI
 
 struct AboutView: View {
+    @Environment(\.dismiss) private var dismiss  // This enables dismissing the sheet
+
     var body: some View {
         VStack {
             Text("About This App")
@@ -27,10 +24,12 @@ struct AboutView: View {
             Spacer()
         }
         .navigationTitle("About")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Close") {
+                    dismiss()
+                }
+            }
+        }
     }
 }
-
-#Preview {
-    AboutView()
-}
-
