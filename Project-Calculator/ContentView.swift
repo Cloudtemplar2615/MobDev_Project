@@ -108,7 +108,7 @@ struct ContentView: View {
                             showBreakdownSheet = true // ✅ Show breakdown sheet
                         }
 
-                    // Last updated timestamp
+                    
                     if let lastUpdated = UserDefaults.standard.object(forKey: "lastUpdated") as? Date {
                         Text("Last updated: \(lastUpdated.formatted(date: .abbreviated, time: .shortened))")
                             .font(.caption)
@@ -118,7 +118,7 @@ struct ContentView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Shopping List")
+            .navigationTitle("Shopping List (\(products.count) items)")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
