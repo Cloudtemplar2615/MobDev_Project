@@ -27,7 +27,7 @@ struct ContentView: View {
     @State private var showAbout = false
     @State private var showAlert = false
     @State private var alertMessage = ""
-
+    @State private var showBreakdownSheet = false
     let taxRates: [String: Double] = [
         "Food": 0.05,
         "Medication": 0.00,
@@ -47,11 +47,18 @@ struct ContentView: View {
         Dictionary(grouping: filteredProducts, by: { $0.category })
     }
 
-    var totalCost: Double {
-        products.reduce(0) { total, product in
-            let taxRate = taxRates[product.category] ?? 0.13
-            return total + product.price + (product.price * taxRate)
+    var subtotal: Double {
+        products.reduce(0) { $0 + $1.price }
+    }
+
+    var taxTotal: Double {
+        products.reduce(0) {
+            $0 + ($1.price * (taxRates[$1.category] ?? 0.13))
         }
+    }
+
+    var totalCost: Double {
+        subtotal + taxTotal
     }
 
     var body: some View {
@@ -97,6 +104,9 @@ struct ContentView: View {
                 VStack {
                     Text("Total: $\(totalCost, specifier: "%.2f")")
                         .font(.headline)
+                        .onTapGesture {
+                            showBreakdownSheet = true // ✅ Show breakdown sheet
+                        }
 
                     // Last updated timestamp
                     if let lastUpdated = UserDefaults.standard.object(forKey: "lastUpdated") as? Date {
@@ -146,6 +156,13 @@ struct ContentView: View {
                         saveProducts()
                     }
                 })
+            }
+            .sheet(isPresented: $showBreakdownSheet) {
+                TotalBreakdownView(
+                    subtotal: subtotal,
+                    taxTotal: taxTotal,
+                    grandTotal: totalCost
+                )
             }
             .sheet(isPresented: $showAbout) {
                 NavigationView {
