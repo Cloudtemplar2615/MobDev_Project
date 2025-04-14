@@ -32,6 +32,7 @@ struct ContentView: View {
         "Cleaning": 0.13,
         "Other": 0.13
     ]
+
     var filteredProducts: [Product] {
         if searchText.isEmpty {
             return products
@@ -39,7 +40,7 @@ struct ContentView: View {
             return products.filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
     }
-    
+
     var totalCost: Double {
         products.reduce(0) { total, product in
             let taxRate = taxRates[product.category] ?? 0.13
@@ -50,20 +51,26 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
+                // Item count display
+                Text("Total items: \(products.count)")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .padding(.top, 5)
+
                 List {
                     ForEach(filteredProducts) { product in
                         HStack {
-                            Text(product.name)
+                            Text("\(categoryEmoji(for: product.category)) \(product.name)")
                             Spacer()
                             Text("$\(product.price, specifier: "%.2f")")
                                 .foregroundColor(.gray)
                         }
-                                Button(role: .destructive) {
-                                    productToDelete = product
-                                    showDeleteItemSheet = true
-                                } label: {
-                                    Image(systemName: "pencil")
-                                }
+                        Button(role: .destructive) {
+                            productToDelete = product
+                            showDeleteItemSheet = true
+                        } label: {
+                            Image(systemName: "pencil")
+                        }
                         .onTapGesture {
                             selectedProduct = product
                             showEditItemSheet = true
@@ -76,11 +83,20 @@ struct ContentView: View {
                 }
                 .listStyle(.insetGrouped)
                 .searchable(text: $searchText, prompt: "Search products")
+
                 VStack {
                     Text("Total: $\(totalCost, specifier: "%.2f")")
                         .font(.headline)
-                        .padding()
+
+                    // Last updated timestamp
+                    if let lastUpdated = UserDefaults.standard.object(forKey: "lastUpdated") as? Date {
+                        Text("Last updated: \(lastUpdated.formatted(date: .abbreviated, time: .shortened))")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .padding(.bottom, 5)
+                    }
                 }
+                .padding()
             }
             .navigationTitle("Shopping List")
             .toolbar {
@@ -97,12 +113,11 @@ struct ContentView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: { showAbout = true }) {
-                            Label("About", systemImage: "info.circle")
-                        }
+                    Button(action: { showAbout = true }) {
+                        Label("About", systemImage: "info.circle")
                     }
+                }
             }
-            
             .sheet(isPresented: $showAddItemSheet) {
                 AddItemView(products: $products, categories: $categories, saveAction: saveProducts)
             }
@@ -149,6 +164,7 @@ struct ContentView: View {
     func saveProducts() {
         if let encoded = try? JSONEncoder().encode(products) {
             UserDefaults.standard.set(encoded, forKey: "savedProducts")
+            UserDefaults.standard.set(Date(), forKey: "lastUpdated") // ✅ Save last update time
         }
     }
 
@@ -158,4 +174,16 @@ struct ContentView: View {
             products = decoded
         }
     }
+
+    
+    func categoryEmoji(for category: String) -> String {
+        switch category {
+        case "Food": return "🍎"
+        case "Medication": return "💊"
+        case "Cleaning": return "🧼"
+        case "Other": return "📦"
+        default: return "🛒"
+        }
+    }
 }
+
