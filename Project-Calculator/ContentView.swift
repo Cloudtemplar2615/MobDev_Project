@@ -25,6 +25,8 @@ struct ContentView: View {
     @State private var showSettings = false
     @State private var searchText = ""
     @State private var showAbout = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
 
     let taxRates: [String: Double] = [
         "Food": 0.05,
@@ -39,6 +41,10 @@ struct ContentView: View {
         } else {
             return products.filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
+    }
+
+    var groupedProducts: [String: [Product]] {
+        Dictionary(grouping: filteredProducts, by: { $0.category })
     }
 
     var totalCost: Double {
@@ -58,27 +64,31 @@ struct ContentView: View {
                     .padding(.top, 5)
 
                 List {
-                    ForEach(filteredProducts) { product in
-                        HStack {
-                            Text("\(categoryEmoji(for: product.category)) \(product.name)")
-                            Spacer()
-                            Text("$\(product.price, specifier: "%.2f")")
-                                .foregroundColor(.gray)
+                    ForEach(groupedProducts.keys.sorted(), id: \ .self) { category in
+                        Section(header: Text("\(categoryEmoji(for: category)) \(category)")) {
+                            ForEach(groupedProducts[category]!) { product in
+                                HStack {
+                                    Text("\(categoryEmoji(for: product.category)) \(product.name)")
+                                    Spacer()
+                                    Text("$\(product.price, specifier: "%.2f")")
+                                        .foregroundColor(.gray)
+                                }
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    selectedProduct = product
+                                    showEditItemSheet = true
+                                }
+                            }
+                            .onDelete { indexSet in
+                                for index in indexSet {
+                                    let item = groupedProducts[category]![index]
+                                    if let globalIndex = products.firstIndex(where: { $0.id == item.id }) {
+                                        products.remove(at: globalIndex)
+                                    }
+                                }
+                                saveProducts()
+                            }
                         }
-                        Button(role: .destructive) {
-                            productToDelete = product
-                            showDeleteItemSheet = true
-                        } label: {
-                            Image(systemName: "pencil")
-                        }
-                        .onTapGesture {
-                            selectedProduct = product
-                            showEditItemSheet = true
-                        }
-                    }
-                    .onDelete { indexSet in
-                        indexToDelete = indexSet
-                        showDeleteConfirmation = true
                     }
                 }
                 .listStyle(.insetGrouped)
@@ -119,7 +129,23 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showAddItemSheet) {
-                AddItemView(products: $products, categories: $categories, saveAction: saveProducts)
+                AddItemView(products: $products, categories: $categories, saveAction: {
+                    if let last = products.last {
+                        if last.name.isEmpty {
+                            products.removeLast()
+                            alertMessage = "Item name cannot be empty."
+                            showAlert = true
+                            return
+                        }
+                        if last.price <= 0 {
+                            products.removeLast()
+                            alertMessage = "Please enter a valid price."
+                            showAlert = true
+                            return
+                        }
+                        saveProducts()
+                    }
+                })
             }
             .sheet(isPresented: $showAbout) {
                 NavigationView {
@@ -146,6 +172,11 @@ struct ContentView: View {
                     SettingsView()
                 }
             }
+            .alert("Invalid Input", isPresented: $showAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(alertMessage)
+            }
             .alert("Are you sure?", isPresented: $showDeleteConfirmation) {
                 Button("Cancel", role: .cancel) {}
                 Button("Delete", role: .destructive) {
@@ -164,7 +195,7 @@ struct ContentView: View {
     func saveProducts() {
         if let encoded = try? JSONEncoder().encode(products) {
             UserDefaults.standard.set(encoded, forKey: "savedProducts")
-            UserDefaults.standard.set(Date(), forKey: "lastUpdated") // ✅ Save last update time
+            UserDefaults.standard.set(Date(), forKey: "lastUpdated")
         }
     }
 
@@ -175,7 +206,6 @@ struct ContentView: View {
         }
     }
 
-    
     func categoryEmoji(for category: String) -> String {
         switch category {
         case "Food": return "🍎"
