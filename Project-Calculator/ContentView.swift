@@ -1,12 +1,3 @@
-//
-//  ContentView.swift
-//  Project-Calculator
-//Mustafa Bandukda - 101203879
-//Jaeden Salandanan - 101324631
-//Fredrich Tan -  101318950
-//Hamzah Hafez - 101429091
-
-
 import SwiftUI
 
 struct Product: Identifiable, Codable {
@@ -29,9 +20,10 @@ struct ContentView: View {
     @State private var showSettings = false
     @State private var searchText = ""
     @State private var showAbout = false
+    @State private var showShareSheet = false
+    @State private var showBreakdownSheet = false
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @State private var showBreakdownSheet = false
 
     let taxRates: [String: Double] = [
         "Food": 0.05,
@@ -39,6 +31,10 @@ struct ContentView: View {
         "Cleaning": 0.13,
         "Other": 0.13
     ]
+
+    var groupedProducts: [String: [Product]] {
+        Dictionary(grouping: filteredProducts, by: { $0.category })
+    }
 
     var filteredProducts: [Product] {
         if searchText.isEmpty {
@@ -48,17 +44,14 @@ struct ContentView: View {
         }
     }
 
-    var groupedProducts: [String: [Product]] {
-        Dictionary(grouping: filteredProducts, by: { $0.category })
-    }
-
     var subtotal: Double {
         products.reduce(0) { $0 + $1.price }
     }
 
     var taxTotal: Double {
-        products.reduce(0) {
-            $0 + ($1.price * (taxRates[$1.category] ?? 0.13))
+        products.reduce(0) { total, product in
+            let rate = taxRates[product.category] ?? 0.13
+            return total + (product.price * rate)
         }
     }
 
@@ -68,14 +61,13 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            
             NavigationView {
                 VStack {
                     Text("Total items: \(products.count)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .padding(.top, 5)
-                    // to show if no items exist for better
+
                     if products.isEmpty {
                         Text("🛒 Start by adding your first item!")
                             .font(.subheadline)
@@ -84,22 +76,21 @@ struct ContentView: View {
                     }
 
                     List {
-                        ForEach(groupedProducts.keys.sorted(), id: \ .self) { category in
+                        ForEach(groupedProducts.keys.sorted(), id: \.self) { category in
                             Section(header: Text("\(categoryEmoji(for: category)) \(category)")) {
                                 ForEach(groupedProducts[category]!) { product in
                                     HStack {
-                                        Text("\(categoryEmoji(for: product.category)) \(product.name)")
+                                        Text(product.name)
                                         Spacer()
                                         Text("$\(product.price, specifier: "%.2f")")
                                             .foregroundColor(.gray)
                                     }
                                     .contentShape(Rectangle())
                                     .onTapGesture {
-                                        selectedProduct = product // edits screens
+                                        selectedProduct = product
                                         showEditItemSheet = true
                                     }
                                 }
-                                // deletion
                                 .onDelete { indexSet in
                                     for index in indexSet {
                                         let item = groupedProducts[category]![index]
@@ -116,9 +107,8 @@ struct ContentView: View {
                     .searchable(text: $searchText, prompt: "Search products")
 
                     VStack {
-                        Text("Total: $\(totalCost, specifier: "%.2f")") // shows total + tax
+                        Text("Total: $\(totalCost, specifier: "%.2f")")
                             .font(.headline)
-                        // user taps allows detailed view
                             .onTapGesture {
                                 showBreakdownSheet = true
                             }
@@ -132,13 +122,16 @@ struct ContentView: View {
                     }
                     .padding()
                 }
-                .navigationTitle("Shopping List (\(products.count) items)") // for dynamic title
+                .navigationTitle("Shopping List (\(products.count) items)")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Button(action: {
-                            showSettings = true
-                        }) {
+                        Button(action: { showSettings = true }) {
                             Image(systemName: "gear")
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: { showShareSheet = true }) {
+                            Image(systemName: "square.and.arrow.up")
                         }
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -157,13 +150,11 @@ struct ContentView: View {
                 Label("List", systemImage: "cart")
             }
 
-            // a chart for category
             PieChartView(products: products)
                 .tabItem {
                     Label("Chart", systemImage: "chart.pie.fill")
                 }
 
-            
             NavigationView {
                 AboutView()
             }
@@ -200,11 +191,6 @@ struct ContentView: View {
                 grandTotal: totalCost
             )
         }
-        .sheet(isPresented: $showAbout) {
-            NavigationView {
-                AboutView()
-            }
-        }
         .sheet(isPresented: $showDeleteItemSheet) {
             if let productToDelete = productToDelete {
                 DeleteItemView(
@@ -225,6 +211,17 @@ struct ContentView: View {
                 SettingsView()
             }
         }
+        .sheet(isPresented: $showAbout) {
+            NavigationView {
+                AboutView()
+            }
+        }
+        .sheet(isPresented: $showShareSheet) {
+            let exportText = products.map {
+                "\($0.name) - $\(String(format: "%.2f", $0.price)) [\($0.category)]"
+            }.joined(separator: "\n")
+            ActivityView(activityItems: [exportText])
+        }
         .alert("Invalid Input", isPresented: $showAlert) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -244,7 +241,7 @@ struct ContentView: View {
     func saveProducts() {
         if let encoded = try? JSONEncoder().encode(products) {
             UserDefaults.standard.set(encoded, forKey: "savedProducts")
-            UserDefaults.standard.set(Date(), forKey: "lastUpdated") // tracks date change
+            UserDefaults.standard.set(Date(), forKey: "lastUpdated")
         }
     }
 
@@ -265,5 +262,4 @@ struct ContentView: View {
         }
     }
 }
-
 
