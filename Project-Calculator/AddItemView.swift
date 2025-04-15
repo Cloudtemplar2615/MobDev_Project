@@ -1,7 +1,10 @@
 //
 //  AddItemView.swift
 //  Project-Calculator
-//
+//Mustafa Bandukda - 101203879
+//Jaeden Salandanan - 101324631
+//Fredrich Tan -  101318950
+//Hamzah Hafez - 101429091
 
 import SwiftUI
 
@@ -47,7 +50,7 @@ struct AddItemView: View {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
-                ToolbarItemGroup(placement: .keyboard) {
+                ToolbarItemGroup(placement: .keyboard) { // just a done button to get rid of keyboard once user is done
                                     Spacer()
                                     Button("Done") {
                                         hideKeyboard()
@@ -65,7 +68,7 @@ struct AddItemView: View {
         
         
         func validateAndSave() {
-            guard !name.trimmingCharacters(in: .whitespaces).isEmpty else {
+            guard !name.trimmingCharacters(in: .whitespaces).isEmpty else { // validation check prevention of empty inputs
                 alertMessage = "Item name cannot be empty."
                 showAlert = true
                 return
@@ -73,7 +76,7 @@ struct AddItemView: View {
             
             
             
-            guard let priceValue = Double(price), priceValue > 0 else {
+            guard let priceValue = Double(price), priceValue > 0 else { // validation check for price
                 alertMessage = "Please enter a valid price greater than 0."
                 showAlert = true
                 return

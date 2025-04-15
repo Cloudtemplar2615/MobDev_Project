@@ -2,6 +2,10 @@
 //  EditItemView.swift
 //  Project-Calculator
 //
+//Mustafa Bandukda - 101203879
+//Jaeden Salandanan - 101324631
+//Fredrich Tan -  101318950
+//Hamzah Hafez - 101429091
 
 import SwiftUI
 
@@ -60,7 +64,7 @@ struct EditItemView: View {
                     } label: {
                         Label("Delete", systemImage: "trash")
                     }
-                    .alert("Are you sure you want to delete this item?", isPresented: $showDeleteConfirmation) {
+                    .alert("Are you sure you want to delete this item?", isPresented: $showDeleteConfirmation) { // button to delete item
                         Button("Delete", role: .destructive) {
                             if let index = products.firstIndex(where: { $0.id == product.id }) {
                                 products.remove(at: index)

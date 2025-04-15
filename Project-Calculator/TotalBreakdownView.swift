@@ -2,7 +2,10 @@
 //  TotalBreakdownView.swift
 //  Project-Calculator
 //
-//  
+//Mustafa Bandukda - 101203879
+//Jaeden Salandanan - 101324631
+//Fredrich Tan -  101318950
+//Hamzah Hafez - 101429091
 //
 
 
