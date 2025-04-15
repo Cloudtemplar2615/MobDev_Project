@@ -82,11 +82,7 @@ struct PieChartView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("\(selected.category)")
                         .font(.title2.bold())
-
-                    Text("Total: $\(selected.total, specifier: "%.2f")")
-
                     Text("Total: $\(selected.total, specifier: "%.2f")") 
-
                         .font(.headline)
                         .padding(.bottom, 5)
 
@@ -112,3 +108,4 @@ struct PieChartView: View {
         }
     }
 }
+

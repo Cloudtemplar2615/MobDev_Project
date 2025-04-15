@@ -19,6 +19,7 @@
 		67EE23EF2DACAB420099D8FB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67EE23EE2DACAB420099D8FB /* SettingsView.swift */; };
 		67EE23F12DACAB470099D8FB /* SearchProductView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67EE23F02DACAB470099D8FB /* SearchProductView.swift */; };
 		714BF8DF2DADB70100B44676 /* TotalBreakdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714BF8DE2DADB70100B44676 /* TotalBreakdownView.swift */; };
+		714BF8E32DADD55400B44676 /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714BF8E22DADD54D00B44676 /* PieChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 		67EE23EE2DACAB420099D8FB /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		67EE23F02DACAB470099D8FB /* SearchProductView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchProductView.swift; sourceTree = "<group>"; };
 		714BF8DE2DADB70100B44676 /* TotalBreakdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalBreakdownView.swift; sourceTree = "<group>"; };
+		714BF8E22DADD54D00B44676 /* PieChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 				67EE23EE2DACAB420099D8FB /* SettingsView.swift */,
 				67EE23F02DACAB470099D8FB /* SearchProductView.swift */,
 				714BF8DE2DADB70100B44676 /* TotalBreakdownView.swift */,
+				714BF8E22DADD54D00B44676 /* PieChartView.swift */,
 			);
 			path = "Project-Calculator";
 			sourceTree = "<group>";
@@ -165,6 +168,7 @@
 				67EE23EF2DACAB420099D8FB /* SettingsView.swift in Sources */,
 				67EE23ED2DACAB3B0099D8FB /* DeleteItemView.swift in Sources */,
 				4ADC9C252D689A9F00463344 /* ContentView.swift in Sources */,
+				714BF8E32DADD55400B44676 /* PieChartView.swift in Sources */,
 				4ADC9C232D689A9F00463344 /* Project_CalculatorApp.swift in Sources */,
 				714BF8DF2DADB70100B44676 /* TotalBreakdownView.swift in Sources */,
 				4ADC9C332D689C9600463344 /* LaunchScreenView.swift in Sources */,

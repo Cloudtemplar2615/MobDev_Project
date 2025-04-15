@@ -53,7 +53,6 @@ struct TotalBreakdownView: View {
             .padding(.horizontal)
 
             Spacer()
-
             Button("Close") {
                 dismiss()
             }
