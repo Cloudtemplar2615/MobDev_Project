@@ -21,7 +21,7 @@ struct ContentView: View {
     @State private var searchText = ""
     @State private var showAbout = false
     @State private var showShareSheet = false
-    @State private var showBreakdown = false // For total breakdown view
+    @State private var showBreakdown = false
 
     let taxRates: [String: Double] = [
         "Food": 0.05,
@@ -96,25 +96,21 @@ struct ContentView: View {
                         Image(systemName: "gear")
                     }
                 }
-
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showShareSheet = true }) {
                         Image(systemName: "square.and.arrow.up")
                     }
                 }
-
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showAddItemSheet = true }) {
                         Label("Add Item", systemImage: "plus")
                     }
                 }
-
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showAbout = true }) {
                         Label("About", systemImage: "info.circle")
                     }
                 }
-
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showBreakdown = true }) {
                         Image(systemName: "chart.bar.fill")
