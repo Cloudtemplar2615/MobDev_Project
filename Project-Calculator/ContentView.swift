@@ -21,7 +21,9 @@ struct ContentView: View {
     @State private var searchText = ""
     @State private var showAbout = false
     @State private var showShareSheet = false
-    @State private var showBreakdown = false
+    @State private var showBreakdownSheet = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
 
     let taxRates: [String: Double] = [
         "Food": 0.05,
@@ -29,6 +31,10 @@ struct ContentView: View {
         "Cleaning": 0.13,
         "Other": 0.13
     ]
+
+    var groupedProducts: [String: [Product]] {
+        Dictionary(grouping: filteredProducts, by: { $0.category })
+    }
 
     var filteredProducts: [Product] {
         if searchText.isEmpty {
@@ -38,11 +44,19 @@ struct ContentView: View {
         }
     }
 
-    var totalCost: Double {
+    var subtotal: Double {
+        products.reduce(0) { $0 + $1.price }
+    }
+
+    var taxTotal: Double {
         products.reduce(0) { total, product in
-            let taxRate = taxRates[product.category] ?? 0.13
-            return total + product.price + (product.price * taxRate)
+            let rate = taxRates[product.category] ?? 0.13
+            return total + (product.price * rate)
         }
+    }
+
+    var totalCost: Double {
+        subtotal + taxTotal
     }
 
     var body: some View {
@@ -54,22 +68,31 @@ struct ContentView: View {
                     .padding(.top, 5)
 
                 List {
-                    ForEach(filteredProducts) { product in
-                        HStack {
-                            Text("\(categoryEmoji(for: product.category)) \(product.name)")
-                                .foregroundColor(.primary)
-                            Spacer()
-                            Text("$\(product.price, specifier: "%.2f")")
-                                .foregroundColor(.gray)
+                    ForEach(groupedProducts.keys.sorted(), id: \.self) { category in
+                        Section(header: Text("\(categoryEmoji(for: category)) \(category)")) {
+                            ForEach(groupedProducts[category]!) { product in
+                                HStack {
+                                    Text(product.name)
+                                    Spacer()
+                                    Text("$\(product.price, specifier: "%.2f")")
+                                        .foregroundColor(.gray)
+                                }
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    selectedProduct = product
+                                    showEditItemSheet = true
+                                }
+                            }
+                            .onDelete { indexSet in
+                                for index in indexSet {
+                                    let item = groupedProducts[category]![index]
+                                    if let globalIndex = products.firstIndex(where: { $0.id == item.id }) {
+                                        products.remove(at: globalIndex)
+                                    }
+                                }
+                                saveProducts()
+                            }
                         }
-                        .onTapGesture {
-                            selectedProduct = product
-                            showEditItemSheet = true
-                        }
-                    }
-                    .onDelete { indexSet in
-                        indexToDelete = indexSet
-                        showDeleteConfirmation = true
                     }
                 }
                 .listStyle(.insetGrouped)
@@ -78,7 +101,9 @@ struct ContentView: View {
                 VStack {
                     Text("Total: $\(totalCost, specifier: "%.2f")")
                         .font(.headline)
-                        .foregroundColor(.primary)
+                        .onTapGesture {
+                            showBreakdownSheet = true
+                        }
 
                     if let lastUpdated = UserDefaults.standard.object(forKey: "lastUpdated") as? Date {
                         Text("Last updated: \(lastUpdated.formatted(date: .abbreviated, time: .shortened))")
@@ -89,7 +114,7 @@ struct ContentView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Shopping List")
+            .navigationTitle("Shopping List (\(products.count) items)")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: { showSettings = true }) {
@@ -111,14 +136,32 @@ struct ContentView: View {
                         Label("About", systemImage: "info.circle")
                     }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showBreakdown = true }) {
-                        Image(systemName: "chart.bar.fill")
-                    }
-                }
             }
             .sheet(isPresented: $showAddItemSheet) {
-                AddItemView(products: $products, categories: $categories, saveAction: saveProducts)
+                AddItemView(products: $products, categories: $categories, saveAction: {
+                    if let last = products.last {
+                        if last.name.isEmpty {
+                            products.removeLast()
+                            alertMessage = "Item name cannot be empty."
+                            showAlert = true
+                            return
+                        }
+                        if last.price <= 0 {
+                            products.removeLast()
+                            alertMessage = "Please enter a valid price."
+                            showAlert = true
+                            return
+                        }
+                        saveProducts()
+                    }
+                })
+            }
+            .sheet(isPresented: $showBreakdownSheet) {
+                TotalBreakdownView(
+                    subtotal: subtotal,
+                    taxTotal: taxTotal,
+                    grandTotal: totalCost
+                )
             }
             .sheet(isPresented: $showAbout) {
                 NavigationView { AboutView() }
@@ -147,12 +190,10 @@ struct ContentView: View {
                 }.joined(separator: "\n")
                 ActivityView(activityItems: [exportText])
             }
-            .sheet(isPresented: $showBreakdown) {
-                TotalBreakdownView(
-                    subtotal: calculateSubtotal(),
-                    taxTotal: calculateTaxTotal(),
-                    grandTotal: totalCost
-                )
+            .alert("Invalid Input", isPresented: $showAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(alertMessage)
             }
             .alert("Are you sure?", isPresented: $showDeleteConfirmation) {
                 Button("Cancel", role: .cancel) {}
@@ -166,17 +207,6 @@ struct ContentView: View {
         }
         .onAppear {
             loadProducts()
-        }
-    }
-
-    func calculateSubtotal() -> Double {
-        products.reduce(0) { $0 + $1.price }
-    }
-
-    func calculateTaxTotal() -> Double {
-        products.reduce(0) { total, product in
-            let rate = taxRates[product.category] ?? 0.13
-            return total + (product.price * rate)
         }
     }
 
@@ -204,3 +234,5 @@ struct ContentView: View {
         }
     }
 }
+
+
