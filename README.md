@@ -66,7 +66,7 @@ About
 
 Clean, modern UI
 
-Fully supports Dark Mode
+Fully supports Dark Mode - Feature was not implemented due to issues 
 
 Responsive layout with iOS system design
 
