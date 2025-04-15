@@ -1,23 +1,29 @@
-# MobDev_Project
 **Features Implemented**
 
 **Shopping List Core**
-
+ 
 Add items with name, price, and category
 
-Delete items from the list with swipe-to-delete
+Edit existing items via tap
 
-Optional "Clear All" to reset the list
+Delete items with swipe or from the edit screen
+
+"Start by adding your first item!" message if list is empty
+
+Search bar to filter products by name
 
 **Categories**
 
 Predefined: Food, Medication, Cleaning, Other
 
-Create and save custom categories
+Users can add and save custom categories
 
-Categories persist across app restarts
+Items are grouped visually by category
 
-**Tax Calculator**
+Emoji icons for category clarity
+
+** Tax Calculator**
+
 Category-specific tax rates:
 
 Food → 5%
@@ -26,7 +32,7 @@ Medication → 0%
 
 Cleaning & Other → 13%
 
-Calculates and displays:
+Displays:
 
 Subtotal
 
@@ -34,35 +40,45 @@ Tax amount
 
 Final total
 
+Tap total to view full breakdown sheet
+
 **Persistent Storage**
 
-Uses UserDefaults to store items and categories
+Uses UserDefaults to store:
 
-Data persists after app restart
+Products
 
-Implemented with Codable for safe encoding/decoding
+Categories
+
+Last update timestamp
+
+Implements Codable for safe encoding/decoding
 
 **User Interface**
 
-Tab-based navigation (Shopping List & About screen)
+Tab-based navigation:
 
-Clean, responsive design
+Shopping List
 
-Dark Mode supported
+Pie Chart
 
-Empty state message when no items exist
+About
 
-**Future Improvements**
+Clean, modern UI
 
-Edit existing items
+Fully supports Dark Mode
 
-Group items visually by category
+Responsive layout with iOS system design
 
-Export shopping list
+**Analytics **
 
-Input validation alerts
+Visual Pie Chart of spending by category
 
-Cloud sync or user login
+Tap a category row to view:
+
+Total spend
+
+Full list of items in that category
 
 
 
@@ -72,14 +88,16 @@ SwiftUI
 
 Xcode
 
+Charts (Swift Charts)
+
 UserDefaults
 
 Codable
 
 **How to Run**
 
-Clone the repository or download the zip.
+Clone the repo or download ZIP
 
-Open the project in Xcode.
+Open the project in Xcode 14+
 
-Run it on a simulator or connected iOS device.
+Build & run on iOS Simulator or real device (iOS 16+)
