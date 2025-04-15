@@ -1,4 +1,4 @@
-<import SwiftUI
+import SwiftUI
 
 struct TotalBreakdownView: View {
     let subtotal: Double

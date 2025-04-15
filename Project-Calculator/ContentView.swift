@@ -24,6 +24,7 @@ struct ContentView: View {
     @State private var showBreakdownSheet = false
     @State private var showAlert = false
     @State private var alertMessage = ""
+    @State private var showPieChart = false   // <-- Added
 
     let taxRates: [String: Double] = [
         "Food": 0.05,
@@ -116,22 +117,25 @@ struct ContentView: View {
             }
             .navigationTitle("Shopping List (\(products.count) items)")
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
                     Button(action: { showSettings = true }) {
                         Image(systemName: "gear")
                     }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
+
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button(action: { showPieChart = true }) {
+                        Image(systemName: "chart.pie.fill")
+                    }
+
                     Button(action: { showShareSheet = true }) {
                         Image(systemName: "square.and.arrow.up")
                     }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
+
                     Button(action: { showAddItemSheet = true }) {
                         Label("Add Item", systemImage: "plus")
                     }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
+
                     Button(action: { showAbout = true }) {
                         Label("About", systemImage: "info.circle")
                     }
@@ -162,6 +166,9 @@ struct ContentView: View {
                     taxTotal: taxTotal,
                     grandTotal: totalCost
                 )
+            }
+            .sheet(isPresented: $showPieChart) {
+                PieChartView(products: products) // <-- NEW CHART SHEET
             }
             .sheet(isPresented: $showAbout) {
                 NavigationView { AboutView() }
@@ -234,5 +241,3 @@ struct ContentView: View {
         }
     }
 }
-
-
