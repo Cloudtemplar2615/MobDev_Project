@@ -19,8 +19,6 @@
 		67EE23EF2DACAB420099D8FB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67EE23EE2DACAB420099D8FB /* SettingsView.swift */; };
 		67EE23F12DACAB470099D8FB /* SearchProductView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67EE23F02DACAB470099D8FB /* SearchProductView.swift */; };
 		714BF8DF2DADB70100B44676 /* TotalBreakdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714BF8DE2DADB70100B44676 /* TotalBreakdownView.swift */; };
-		BA6E51682DADF3EE003D28C0 /* ActivityView 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA6E51672DADF3ED003D28C0 /* ActivityView 2.swift */; };
-		BA6E516A2DADF514003D28C0 /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA6E51692DADF4F1003D28C0 /* PieChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,8 +35,6 @@
 		67EE23EE2DACAB420099D8FB /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		67EE23F02DACAB470099D8FB /* SearchProductView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchProductView.swift; sourceTree = "<group>"; };
 		714BF8DE2DADB70100B44676 /* TotalBreakdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalBreakdownView.swift; sourceTree = "<group>"; };
-		BA6E51672DADF3ED003D28C0 /* ActivityView 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActivityView 2.swift"; sourceTree = "<group>"; };
-		BA6E51692DADF4F1003D28C0 /* PieChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,8 +79,6 @@
 				67EE23EE2DACAB420099D8FB /* SettingsView.swift */,
 				67EE23F02DACAB470099D8FB /* SearchProductView.swift */,
 				714BF8DE2DADB70100B44676 /* TotalBreakdownView.swift */,
-				BA6E51672DADF3ED003D28C0 /* ActivityView 2.swift */,
-				BA6E51692DADF4F1003D28C0 /* PieChartView.swift */,
 			);
 			path = "Project-Calculator";
 			sourceTree = "<group>";
@@ -167,8 +161,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BA6E516A2DADF514003D28C0 /* PieChartView.swift in Sources */,
-				BA6E51682DADF3EE003D28C0 /* ActivityView 2.swift in Sources */,
 				4ADC9C352D689DA900463344 /* AboutView.swift in Sources */,
 				67EE23EF2DACAB420099D8FB /* SettingsView.swift in Sources */,
 				67EE23ED2DACAB3B0099D8FB /* DeleteItemView.swift in Sources */,

@@ -24,7 +24,6 @@ struct ContentView: View {
     @State private var showBreakdownSheet = false
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @State private var showPieChart = false   // <-- Added
 
     let taxRates: [String: Double] = [
         "Food": 0.05,
@@ -61,159 +60,181 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavigationView {
-            VStack {
-                Text("Total items: \(products.count)")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding(.top, 5)
+        TabView {
+            NavigationView {
+                VStack {
+                    Text("Total items: \(products.count)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .padding(.top, 5)
 
-                List {
-                    ForEach(groupedProducts.keys.sorted(), id: \.self) { category in
-                        Section(header: Text("\(categoryEmoji(for: category)) \(category)")) {
-                            ForEach(groupedProducts[category]!) { product in
-                                HStack {
-                                    Text(product.name)
-                                    Spacer()
-                                    Text("$\(product.price, specifier: "%.2f")")
-                                        .foregroundColor(.gray)
-                                }
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    selectedProduct = product
-                                    showEditItemSheet = true
-                                }
-                            }
-                            .onDelete { indexSet in
-                                for index in indexSet {
-                                    let item = groupedProducts[category]![index]
-                                    if let globalIndex = products.firstIndex(where: { $0.id == item.id }) {
-                                        products.remove(at: globalIndex)
+                    if products.isEmpty {
+                        Text("🛒 Start by adding your first item!")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                            .padding(.top, 20)
+                    }
+
+                    List {
+                        ForEach(groupedProducts.keys.sorted(), id: \.self) { category in
+                            Section(header: Text("\(categoryEmoji(for: category)) \(category)")) {
+                                ForEach(groupedProducts[category]!) { product in
+                                    HStack {
+                                        Text(product.name)
+                                        Spacer()
+                                        Text("$\(product.price, specifier: "%.2f")")
+                                            .foregroundColor(.gray)
+                                    }
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        selectedProduct = product
+                                        showEditItemSheet = true
                                     }
                                 }
-                                saveProducts()
+                                .onDelete { indexSet in
+                                    for index in indexSet {
+                                        let item = groupedProducts[category]![index]
+                                        if let globalIndex = products.firstIndex(where: { $0.id == item.id }) {
+                                            products.remove(at: globalIndex)
+                                        }
+                                    }
+                                    saveProducts()
+                                }
                             }
                         }
                     }
-                }
-                .listStyle(.insetGrouped)
-                .searchable(text: $searchText, prompt: "Search products")
+                    .listStyle(.insetGrouped)
+                    .searchable(text: $searchText, prompt: "Search products")
 
-                VStack {
-                    Text("Total: $\(totalCost, specifier: "%.2f")")
-                        .font(.headline)
-                        .onTapGesture {
-                            showBreakdownSheet = true
+                    VStack {
+                        Text("Total: $\(totalCost, specifier: "%.2f")")
+                            .font(.headline)
+                            .onTapGesture {
+                                showBreakdownSheet = true
+                            }
+
+                        if let lastUpdated = UserDefaults.standard.object(forKey: "lastUpdated") as? Date {
+                            Text("Last updated: \(lastUpdated.formatted(date: .abbreviated, time: .shortened))")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                                .padding(.bottom, 5)
                         }
-
-                    if let lastUpdated = UserDefaults.standard.object(forKey: "lastUpdated") as? Date {
-                        Text("Last updated: \(lastUpdated.formatted(date: .abbreviated, time: .shortened))")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                            .padding(.bottom, 5)
                     }
+                    .padding()
                 }
-                .padding()
-            }
-            .navigationTitle("Shopping List (\(products.count) items)")
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
-                    Button(action: { showSettings = true }) {
-                        Image(systemName: "gear")
-                    }
-                }
-
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button(action: { showPieChart = true }) {
-                        Image(systemName: "chart.pie.fill")
-                    }
-
-                    Button(action: { showShareSheet = true }) {
-                        Image(systemName: "square.and.arrow.up")
-                    }
-
-                    Button(action: { showAddItemSheet = true }) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-
-                    Button(action: { showAbout = true }) {
-                        Label("About", systemImage: "info.circle")
-                    }
-                }
-            }
-            .sheet(isPresented: $showAddItemSheet) {
-                AddItemView(products: $products, categories: $categories, saveAction: {
-                    if let last = products.last {
-                        if last.name.isEmpty {
-                            products.removeLast()
-                            alertMessage = "Item name cannot be empty."
-                            showAlert = true
-                            return
+                .navigationTitle("Shopping List (\(products.count) items)")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: { showSettings = true }) {
+                            Image(systemName: "gear")
                         }
-                        if last.price <= 0 {
-                            products.removeLast()
-                            alertMessage = "Please enter a valid price."
-                            showAlert = true
-                            return
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: { showShareSheet = true }) {
+                            Image(systemName: "square.and.arrow.up")
                         }
-                        saveProducts()
                     }
-                })
-            }
-            .sheet(isPresented: $showBreakdownSheet) {
-                TotalBreakdownView(
-                    subtotal: subtotal,
-                    taxTotal: taxTotal,
-                    grandTotal: totalCost
-                )
-            }
-            .sheet(isPresented: $showPieChart) {
-                PieChartView(products: products) // <-- NEW CHART SHEET
-            }
-            .sheet(isPresented: $showAbout) {
-                NavigationView { AboutView() }
-            }
-            .sheet(isPresented: $showDeleteItemSheet) {
-                if let productToDelete = productToDelete {
-                    DeleteItemView(
-                        product: Binding(
-                            get: { productToDelete },
-                            set: { self.productToDelete = $0 }
-                        ),
-                        isEditing: $showDeleteItemSheet,
-                        products: $products
-                    )
-                }
-            }
-            .sheet(item: $selectedProduct) { product in
-                EditItemView(product: product, products: $products, saveAction: saveProducts)
-            }
-            .sheet(isPresented: $showSettings) {
-                NavigationView { SettingsView() }
-            }
-            .sheet(isPresented: $showShareSheet) {
-                let exportText = products.map {
-                    "\($0.name) - $\(String(format: "%.2f", $0.price)) [\($0.category)]"
-                }.joined(separator: "\n")
-                ActivityView(activityItems: [exportText])
-            }
-            .alert("Invalid Input", isPresented: $showAlert) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(alertMessage)
-            }
-            .alert("Are you sure?", isPresented: $showDeleteConfirmation) {
-                Button("Cancel", role: .cancel) {}
-                Button("Delete", role: .destructive) {
-                    if let indexSet = indexToDelete {
-                        products.remove(atOffsets: indexSet)
-                        saveProducts()
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: { showAddItemSheet = true }) {
+                            Label("Add Item", systemImage: "plus")
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: { showAbout = true }) {
+                            Label("About", systemImage: "info.circle")
+                        }
                     }
                 }
+            }
+            .tabItem {
+                Label("List", systemImage: "cart")
+            }
+
+            PieChartView(products: products)
+                .tabItem {
+                    Label("Chart", systemImage: "chart.pie.fill")
+                }
+
+            NavigationView {
+                AboutView()
+            }
+            .tabItem {
+                Label("About", systemImage: "info.circle")
             }
         }
         .onAppear {
             loadProducts()
+        }
+        .sheet(isPresented: $showAddItemSheet) {
+            AddItemView(products: $products, categories: $categories, saveAction: {
+                if let last = products.last {
+                    if last.name.isEmpty {
+                        products.removeLast()
+                        alertMessage = "Item name cannot be empty."
+                        showAlert = true
+                        return
+                    }
+                    if last.price <= 0 {
+                        products.removeLast()
+                        alertMessage = "Please enter a valid price."
+                        showAlert = true
+                        return
+                    }
+                    saveProducts()
+                }
+            })
+        }
+        .sheet(isPresented: $showBreakdownSheet) {
+            TotalBreakdownView(
+                subtotal: subtotal,
+                taxTotal: taxTotal,
+                grandTotal: totalCost
+            )
+        }
+        .sheet(isPresented: $showDeleteItemSheet) {
+            if let productToDelete = productToDelete {
+                DeleteItemView(
+                    product: Binding(
+                        get: { productToDelete },
+                        set: { self.productToDelete = $0 }
+                    ),
+                    isEditing: $showDeleteItemSheet,
+                    products: $products
+                )
+            }
+        }
+        .sheet(item: $selectedProduct) { product in
+            EditItemView(product: product, products: $products, saveAction: saveProducts)
+        }
+        .sheet(isPresented: $showSettings) {
+            NavigationView {
+                SettingsView()
+            }
+        }
+        .sheet(isPresented: $showAbout) {
+            NavigationView {
+                AboutView()
+            }
+        }
+        .sheet(isPresented: $showShareSheet) {
+            let exportText = products.map {
+                "\($0.name) - $\(String(format: "%.2f", $0.price)) [\($0.category)]"
+            }.joined(separator: "\n")
+            ActivityView(activityItems: [exportText])
+        }
+        .alert("Invalid Input", isPresented: $showAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(alertMessage)
+        }
+        .alert("Are you sure?", isPresented: $showDeleteConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                if let indexSet = indexToDelete {
+                    products.remove(atOffsets: indexSet)
+                    saveProducts()
+                }
+            }
         }
     }
 
@@ -241,3 +262,4 @@ struct ContentView: View {
         }
     }
 }
+
