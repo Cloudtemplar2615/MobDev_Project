@@ -1,11 +1,3 @@
-//
-//  ActivityView.swift
-//  Project-Calculator
-//
-//  Created by Hamza hafez on 2025-04-14.
-//
-
-
 import SwiftUI
 import UIKit
 
